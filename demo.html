@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Multi-select</title>
+    <script src="multi-select-plugin.js"></script>
+  </head>
+  <body>
+
+
+    <ul id="selectedItems"></ul>
+    <hr/>
+    <ul id="unselectedItems"></ul>
+<script>
+  createMultiSelectWidget({
+    "selectedId": "selectedItems",
+    "unselectedId": "unselectedItems",
+    "data":{
+      "selectedItems": [],
+      "unselectedItems": ["HTC", "Apple", "Nexus"]
+    }
+  })
+</script>
+  </body>
+</html>
