@@ -9,8 +9,8 @@ var createMultiSelectWidget = createMultiSelectWidget || (function(){
   local = {
     updateList: function() {
       this.sort();
-      this.createElementUnselectedList();
-      this.createElementSelectedList();
+      this.createList(true);
+      this.createList(false);
       this.checkIfAllSelected();
     },
     checkIfAllSelected: function() {
@@ -20,80 +20,50 @@ var createMultiSelectWidget = createMultiSelectWidget || (function(){
           info.selectUnselectAll.checked = false;
     },
     selectUnselectAll: function() {
-      info.selectUnselectAll.checked ? local.selectAll() : local.unselectAll();
-    },
-    selectAll: function() {
-      while(info.data.unselectedItems.length) {
-        info.data.selectedItems.push(info.data.unselectedItems.pop());
-      }
-      this.updateList();
-    },
-    unselectAll: function() {
-      while(info.data.selectedItems.length) {
-        info.data.unselectedItems.push(info.data.selectedItems.pop());
-      }
-      this.updateList();
+      var pop, push;
+      pop = info.selectUnselectAll.checked ? info.data.unselectedItems : info.data.selectedItems;
+      push = info.selectUnselectAll.checked ? info.data.selectedItems : info.data.unselectedItems;
+      while(pop.length)
+        push.push(pop.pop());
+      local.updateList();
     },
     sort: function(){
       info.data.selectedItems.sort();
       info.data.unselectedItems.sort();
     },
-    createElementUnselectedList: function(){
+    createList: function(isSelectedItems) {
       var that = this,
-        frag = doc.createDocumentFragment()
+        frag = doc.createDocumentFragment(),
+        push = isSelectedItems ? info.data.unselectedItems : info.data.selectedItems,
+        pop = isSelectedItems ? info.data.selectedItems : info.data.unselectedItems,
+        list = pop,
+        wrapper = isSelectedItems ? info.selectedWrapper : info.unselectedWrapper
       ;
-      info.unselectedWrapper.innerHTML="";
-      info.data.unselectedItems.forEach(function(item){
+      wrapper.innerHTML="";
+      list.forEach(function(item){
         var li = doc.createElement("li"),
           check = doc.createElement("input"),
           span = doc.createElement("span")
         ;
         check.setAttribute("value", item);
         check.setAttribute("type", "checkbox");
+        if(isSelectedItems)
+          check.setAttribute("checked", "checked");
         span.innerHTML = item;
         li.appendChild(check);
         li.appendChild(span);
         frag.appendChild(li);
         check.addEventListener("click", function(){
-          that.popUnselectedItem(item);
+          that.popNPushItems(item, pop, push);
         }, false);
       });
-      info.unselectedWrapper.appendChild(frag);
+      wrapper.appendChild(frag);
     },
-    createElementSelectedList: function(){
-      var that = this,
-      frag = doc.createDocumentFragment()
-      ;
-      info.selectedWrapper.innerHTML = "";
-      info.data.selectedItems.forEach(function(item){
-        var li = doc.createElement("li"),
-          check = doc.createElement("input"),
-          span = doc.createElement("span")
-        ;
-        check.setAttribute("value", item);
-        check.setAttribute("checked", "checked");
-        check.setAttribute("type", "checkbox");
-        span.innerHTML = item;
-        li.appendChild(check);
-        li.appendChild(span);
-        frag.appendChild(li);
-        check.addEventListener("click", function(){
-          that.popSelectedItem(item);
-        }, false);
-      });
-      info.selectedWrapper.appendChild(frag);
+    popNPushItems: function(item, pop, push) {
+      pop.splice(pop.indexOf(item),1);
+      push.push(item);
+      this.updateList();
     },
-    popSelectedItem: function(item) {
-      info.data.selectedItems.splice(info.data.selectedItems.indexOf(item),1);
-      info.data.unselectedItems.push(item);
-      local.sort();
-      local.updateList();
-    },
-    popUnselectedItem: function(item){
-      info.data.unselectedItems.splice(info.data.unselectedItems.indexOf(item),1);
-      info.data.selectedItems.push(item);
-      local.updateList();
-    }
   };
 
   pub = function(data){
