@@ -2,19 +2,44 @@
   <head>
     <title>Multi-select</title>
     <script src="multi-select-plugin.js"></script>
+    <style>
+      .list-wrapper{
+        margin: 133px auto;
+        display: block;
+        width: 400px;
+        border: 1px solid grey;
+        box-shadow: 1px 1px 2px grey;
+      }
+
+      .list-wrapper li:hover {
+        background-color: yellow;
+        cursor: pointer;
+      }
+
+      .list-wrapper ul{
+        list-style-type: none;
+      }
+    </style>
   </head>
   <body>
 
-
-    <ul id="selectedItems"></ul>
-    <hr/>
-    <ul id="unselectedItems"></ul>
+<div class="list-wrapper">
+  <ul>
+    <li>
+      <input type="checkbox" id="selectAll"/> <span>Select All </span>
+    </li>
+  </ul>
+  <ul id="selectedItems"></ul>
+  <hr/>
+  <ul id="unselectedItems"></ul>
+</div>
 <script>
   createMultiSelectWidget({
     "selectedId": "selectedItems",
     "unselectedId": "unselectedItems",
+    "selectAllId": "selectAll",
     "data":{
-      "selectedItems": [],
+      "selectedItems": ["Xiaomi", "Samsung"],
       "unselectedItems": ["HTC", "Apple", "Nexus"]
     }
   })
